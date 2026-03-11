@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>Networking Fundamentals — Learning Video</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0a0e1a;--bgCard:#111827;--bgAccent:#1a2235;
+--primary:#38bdf8;--primaryDim:#1e6b99;--secondary:#f59e0b;
+--tertiary:#a78bfa;--success:#34d399;--danger:#f87171;
+--text:#e2e8f0;--textDim:#94a3b8;--textMuted:#64748b;
+--border:#1e293b;--white:#fff;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif}
+button{cursor:pointer;border:none;background:none;outline:none;font-family:inherit}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .55s ease both}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}.d5{animation-delay:.5s}
+
+#app{display:flex;flex-direction:column;height:100%;overflow:hidden}
+
+/* progress */
+.top-bar{height:3px;background:var(--border);position:relative;flex-shrink:0}
+.top-bar-fill{height:100%;transition:width .1s linear}
+
+.header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;flex-shrink:0}
+.header-label{font-size:10px;color:var(--textMuted);letter-spacing:1.5px;text-transform:uppercase}
+.header-count{font-size:12px;color:var(--textDim);font-family:monospace}
+
+/* dots */
+.dots{display:flex;gap:3px;justify-content:center;padding:0 16px 6px;flex-shrink:0}
+.dot{height:4px;border-radius:2px;transition:all .3s}
+
+/* slide */
+.slide-area{flex:1;display:flex;align-items:center;justify-content:center;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:8px 16px}
+.slide{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:560px;width:100%}
+.slide .section-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:3px;margin-bottom:10px;opacity:.8}
+.slide h1{font-size:24px;font-weight:800;color:var(--white);margin-bottom:4px;line-height:1.2}
+.slide .subtitle{font-size:13px;color:var(--textDim);margin-bottom:16px;max-width:440px}
+.slide.title-slide h1{font-size:32px}
+
+.visual{margin:12px 0 16px;width:100%}
+
+/* bullet list */
+.bullets{text-align:left;width:100%}
+.bullet-item{display:flex;gap:10px;margin-bottom:10px}
+.bullet-mark{font-weight:700;font-size:16px;line-height:22px;flex-shrink:0}
+.bullet-text{font-size:13px;line-height:22px;color:var(--text)}
+
+/* compare table */
+.cmp{width:100%;max-width:500px;margin:0 auto;border-radius:10px;overflow:hidden}
+.cmp-grid{display:grid;gap:1px;font-size:12px;background:var(--border)}
+.cmp-hdr{background:var(--primaryDim);padding:7px 10px;font-weight:700;color:var(--white);text-align:center}
+.cmp-cell{padding:6px 10px;text-align:center;color:var(--textDim)}
+.cmp-cell.even{background:var(--bgAccent)}.cmp-cell.odd{background:var(--bgCard)}
+
+/* subnet blocks */
+.subnet-row{display:flex;gap:4px;width:100%;max-width:480px;margin:0 auto}
+.subnet-block{flex:1;border-radius:8px;padding:12px 6px;text-align:center}
+.subnet-label{font-family:monospace;font-weight:700;font-size:13px}
+.subnet-range{font-size:10px;color:var(--textDim);margin-top:3px}
+.subnet-hosts{font-size:9px;color:var(--textMuted);margin-top:2px}
+
+/* sip flow */
+.sip-steps{display:flex;align-items:center;gap:5px;justify-content:center;flex-wrap:wrap}
+.sip-step{border-radius:8px;padding:7px 12px;font-size:11px;font-family:monospace;color:var(--text)}
+.sip-arrow{color:var(--textMuted);font-size:14px}
+
+/* ipv4 binary */
+.ip-display{font-family:monospace;font-size:26px;letter-spacing:2px;margin-bottom:6px}
+.ip-sub{font-size:11px;color:var(--textDim)}
+.binary-row{display:flex;justify-content:center;gap:5px;margin-top:14px;flex-wrap:wrap}
+.binary-byte{font-family:monospace;font-size:10px;padding:5px 7px;border-radius:6px;background:var(--bgAccent)}
+.ipv6-tags{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:14px}
+.ipv6-tag{border-radius:20px;padding:5px 13px;font-size:11px}
+
+/* controls */
+.controls{display:flex;justify-content:center;align-items:center;gap:14px;padding:14px 16px 8px;flex-shrink:0}
+.ctrl-btn{width:40px;height:40px;border-radius:50%;background:var(--bgAccent);color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border)}
+.ctrl-btn:disabled{opacity:.35}
+.play-btn{width:50px;height:50px;border-radius:50%;color:var(--white);font-size:18px;display:flex;align-items:center;justify-content:center}
+.hint{text-align:center;padding:0 0 12px;font-size:9px;color:var(--textMuted);flex-shrink:0}
+
+/* voip svg */
+.voip-svg,.lan-svg,.wan-svg,.globe-svg{width:100%;max-width:380px;margin:0 auto;display:block}
+
+/* tip box */
+.tip-icon{display:block;margin:0 auto 6px;font-size:38px;text-align:center}
+
+@media(min-width:600px){
+.slide h1{font-size:28px}
+.slide.title-slide h1{font-size:38px}
+.bullet-text{font-size:14px}
+.cmp-grid{font-size:13px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top-bar"><div class="top-bar-fill" id="topFill"></div></div>
+  <div class="header"><span class="header-label">Networking Fundamentals</span><span class="header-count" id="counter"></span></div>
+  <div class="dots" id="dots"></div>
+  <div class="slide-area" id="slideArea"></div>
+  <div class="controls">
+    <button class="ctrl-btn" id="prevBtn" onclick="prev()">‹</button>
+    <button class="play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+    <button class="ctrl-btn" id="nextBtn" onclick="next()">›</button>
+  </div>
+  <div class="hint">← → to navigate • Space to play/pause</div>
+</div>
+
+<script>
+const DURATION=12000;
+const C={primary:"#38bdf8",primaryDim:"#1e6b99",secondary:"#f59e0b",tertiary:"#a78bfa",success:"#34d399",danger:"#f87171",bgAccent:"#1a2235",bgCard:"#111827",text:"#e2e8f0",textDim:"#94a3b8",textMuted:"#64748b",border:"#1e293b",white:"#fff"};
+
+const secColor=s=>({"intro":C.primary,"WAN vs LAN":C.secondary,"IPv4 vs IPv6":C.tertiary,"IPv6 vs IPv4":C.tertiary,"Subnetting":C.success,"SIP & VoIP":C.danger,"Summary":C.primary})[s]||C.primary;
+
+const slides=[
+{id:"title",section:"intro",title:"Networking Fundamentals",subtitle:"WAN vs LAN • IPv4 vs IPv6 • Subnetting • SIP & VoIP",visual:"globe"},
+{id:"lan",section:"WAN vs LAN",title:"What Is a LAN?",subtitle:"Local Area Network",bullets:["Connects devices within a limited area — office, building, or home","Owned and fully managed by the organisation","Speeds of 1–10 Gbps on wired, 1 Gbps+ on Wi-Fi 6","Ultra-low latency: under 1 ms on Ethernet"],visual:"lan"},
+{id:"wan",section:"WAN vs LAN",title:"What Is a WAN?",subtitle:"Wide Area Network",bullets:["Spans cities, countries, or the entire globe","Connects multiple LANs together across distance","Infrastructure leased from ISPs / carriers","Higher latency (10–200+ ms) and higher cost per Mbps"],visual:"wan"},
+{id:"lw-cmp",section:"WAN vs LAN",title:"LAN vs WAN Comparison",visual:"cmp",cmpH:["","LAN","WAN"],cmpR:[["Speed","1–10 Gbps","50 Mbps–10 Gbps"],["Latency","< 1 ms","10–200+ ms"],["Ownership","Self-managed","ISP / carrier"],["Cost","Low (hardware)","High (recurring)"],["Security","Physical + network","Encryption (VPN)"]]},
+{id:"lan-ts",section:"WAN vs LAN",title:"Troubleshooting LAN",subtitle:"Common Issues & Fixes",bullets:["No connectivity → Check cable, port LEDs, DHCP assignment","Slow speeds → Duplex mismatch, CRC errors, bad cables","Wi-Fi drops → Channel congestion, AP overload, firmware","Broadcast storms → Enable STP, find rogue switches/hubs"],visual:"wrench"},
+{id:"wan-ts",section:"WAN vs LAN",title:"Troubleshooting WAN",subtitle:"Common Issues & Fixes",bullets:["Outage → Ping ISP gateway, check router WAN interface","High latency → traceroute to find the bad hop, report to ISP","VPN down → Check Phase 1/2 logs, NAT-T settings, certs","Packet loss → iperf3 between sites, compare to SLA"],visual:"wrench"},
+{id:"ipv4",section:"IPv4 vs IPv6",title:"IPv4 Explained",subtitle:"32-bit Addressing",bullets:["Format: 4 octets in dotted decimal — 192.168.1.10","~4.3 billion addresses total (many reserved)","Private ranges: 10.x.x.x, 172.16–31.x.x, 192.168.x.x","NAT allows many devices to share one public IP"],visual:"ipv4"},
+{id:"ipv6",section:"IPv4 vs IPv6",title:"IPv6 Explained",subtitle:"128-bit Addressing",bullets:["Format: 8 hex groups — 2001:db8:85a3::8a2e:0370:7334","3.4 × 10³⁸ addresses — effectively unlimited","SLAAC: devices auto-configure without DHCP","No NAT needed, no broadcast — uses multicast instead"],visual:"ipv6"},
+{id:"ip-cmp",section:"IPv4 vs IPv6",title:"IPv4 vs IPv6",visual:"cmp",cmpH:["","IPv4","IPv6"],cmpR:[["Bits","32","128"],["Notation","Dotted decimal","Hex colon"],["NAT","Required","Not needed"],["Auto-config","DHCP","SLAAC"],["Broadcast","Yes","No (multicast)"]]},
+{id:"ip-ts",section:"IPv4 vs IPv6",title:"Troubleshooting IP",subtitle:"Common Issues & Fixes",bullets:["169.254.x.x (APIPA) → DHCP server unreachable, check VLAN","IP conflict → arp -a to find duplicate MAC, use reservations","IPv6 not working → Verify router advertisements (RAs)","Dual-stack timeout → Test ping -6, check AAAA DNS records"],visual:"wrench"},
+{id:"sub-why",section:"Subnetting",title:"Why Subnet?",subtitle:"Divide & Conquer Your Network",bullets:["Control broadcasts — each subnet = its own broadcast domain","Security — firewall rules between segments (servers, guests, etc.)","Efficient IP usage — allocate only what each segment needs","Routing optimisation — smaller tables, faster convergence"],visual:"subnet"},
+{id:"sub-tbl",section:"Subnetting",title:"Common Subnet Masks",visual:"cmp",cmpH:["CIDR","Mask","Usable","Use Case"],cmpR:[["/24","255.255.255.0","254","Standard LAN"],["/25","255.255.255.128","126","Medium segment"],["/26","255.255.255.192","62","Small office"],["/27","255.255.255.224","30","Server VLAN"],["/28","255.255.255.240","14","Small segment"],["/30","255.255.255.252","2","Point-to-point"]]},
+{id:"sub-how",section:"Subnetting",title:"How to Subnet",subtitle:"Step-by-Step: 192.168.10.0/24 → 4 Subnets",bullets:["① Need 4 subnets → borrow 2 bits (2² = 4)","② New mask: /24 + 2 = /26 (255.255.255.192)","③ Block size: 256 – 192 = 64 addresses each","④ Subnets: .0/26, .64/26, .128/26, .192/26"],visual:"subnet"},
+{id:"sub-ts",section:"Subnetting",title:"Troubleshooting Subnets",subtitle:"Common Issues & Fixes",bullets:["Can't reach gateway → Wrong subnet mask, verify with ipconfig","VLANs can't talk → Check inter-VLAN routing / SVI config","Wrong DHCP scope → Verify relay agent + matching scope","Overlapping subnets → Use ipcalc to verify ranges"],visual:"wrench"},
+{id:"voip",section:"SIP & VoIP",title:"How VoIP Works",subtitle:"Voice Over IP Networks",bullets:["Voice → digitised → compressed (codec) → IP packets → network","Real-time: sensitive to latency, jitter, and packet loss","SIP handles signalling (setup/teardown of calls)","RTP carries the actual audio stream over UDP"],visual:"voip"},
+{id:"sip",section:"SIP & VoIP",title:"SIP Registration & Calls",subtitle:"How Phones Connect",bullets:["REGISTER → Server challenges (401) → Re-auth → 200 OK","Call: INVITE → 180 Ringing → 200 OK → ACK → RTP flows","Either side sends BYE to end the call","Registration expires and must be renewed periodically"],visual:"sip"},
+{id:"vq",section:"SIP & VoIP",title:"VoIP Quality Thresholds",visual:"cmp",cmpH:["Metric","Target","If Exceeded"],cmpR:[["Latency","< 150 ms","Delay in conversation"],["Jitter","< 30 ms","Choppy / distorted"],["Packet Loss","< 1%","Gaps, robotic audio"],["Bandwidth","~85 kbps","All metrics degrade"]]},
+{id:"voip-ts",section:"SIP & VoIP",title:"Troubleshooting VoIP",subtitle:"Common Issues & Fixes",bullets:["401 loop → Wrong credentials or clock skew on phone","One-way audio → NAT issue, SDP has private IP, use STUN","No audio → Firewall blocking RTP ports (10000–20000)","Poor quality → Enable QoS (DSCP EF), disable SIP ALG"],visual:"wrench"},
+{id:"end",section:"Summary",title:"Key Takeaways",bullets:["LAN = local, fast, self-managed  |  WAN = distant, leased, higher latency","IPv4 = 32-bit, NAT-dependent  |  IPv6 = 128-bit, auto-config, no NAT","Subnetting = broadcast control + security + efficient IP allocation","VoIP/SIP = real-time, NAT-sensitive — always check ALG & firewall first"],visual:"summary"},
+];
+
+let cur=0,playing=false,progress=0,timer=null,start=0;
+const $=id=>document.getElementById(id);
+
+function buildDots(){
+  const d=$("dots");d.innerHTML="";
+  slides.forEach((_,i)=>{const b=document.createElement("button");b.className="dot";b.style.width=(i===cur?"22px":"7px");b.style.background=i===cur?secColor(slides[cur].section):i<cur?secColor(slides[cur].section)+"60":"var(--border)";b.onclick=()=>goTo(i);d.appendChild(b)});
+}
+
+function renderVisual(s){
+  const sc=secColor(s.section);
+  if(s.visual==="globe") return `<svg viewBox="0 0 300 200" class="globe-svg"><defs><radialGradient id="gw" cx="40%" cy="35%"><stop offset="0%" stop-color="${C.primary}" stop-opacity=".3"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><circle cx="150" cy="100" r="100" fill="url(#gw)"/><circle cx="150" cy="100" r="80" fill="none" stroke="${C.primary}" stroke-width="1.5" opacity=".6"/><ellipse cx="150" cy="100" rx="80" ry="28" fill="none" stroke="${C.primary}" stroke-width="1" opacity=".4"/><ellipse cx="150" cy="100" rx="28" ry="80" fill="none" stroke="${C.primary}" stroke-width="1" opacity=".4"/><ellipse cx="150" cy="100" rx="56" ry="80" fill="none" stroke="${C.primary}" stroke-width="1" opacity=".3"/>${[0,60,120,180,240,300].map((a,i)=>`<circle cx="${150+Math.cos(a*Math.PI/180)*80}" cy="${100+Math.sin(a*Math.PI/180)*28}" r="3" fill="${C.secondary}" opacity=".8"><animate attributeName="r" values="2;4;2" dur="2s" begin="${i*.3}s" repeatCount="indefinite"/></circle>`).join("")}</svg>`;
+  if(s.visual==="lan") return `<svg viewBox="0 0 300 180" class="lan-svg"><line x1="150" y1="50" x2="60" y2="115" stroke="${C.primary}" stroke-width="2" opacity=".5"><animate attributeName="stroke-dasharray" values="0,200;200,0" dur="1.2s" fill="freeze"/></line><line x1="150" y1="50" x2="150" y2="135" stroke="${C.primary}" stroke-width="2" opacity=".5"><animate attributeName="stroke-dasharray" values="0,200;200,0" dur="1.2s" begin=".2s" fill="freeze"/></line><line x1="150" y1="50" x2="240" y2="115" stroke="${C.primary}" stroke-width="2" opacity=".5"><animate attributeName="stroke-dasharray" values="0,200;200,0" dur="1.2s" begin=".4s" fill="freeze"/></line><rect x="122" y="26" width="56" height="28" rx="6" fill="${C.primaryDim}" stroke="${C.primary}" stroke-width="1.5"/><text x="150" y="44" text-anchor="middle" fill="${C.text}" font-size="11" font-family="monospace">Switch</text><rect x="32" y="108" width="56" height="28" rx="6" fill="${C.bgAccent}" stroke="${C.textMuted}" stroke-width="1.5"/><text x="60" y="126" text-anchor="middle" fill="${C.text}" font-size="11" font-family="monospace">PC</text><rect x="122" y="128" width="56" height="28" rx="6" fill="${C.bgAccent}" stroke="${C.textMuted}" stroke-width="1.5"/><text x="150" y="146" text-anchor="middle" fill="${C.text}" font-size="11" font-family="monospace">Laptop</text><rect x="212" y="108" width="56" height="28" rx="6" fill="${C.bgAccent}" stroke="${C.textMuted}" stroke-width="1.5"/><text x="240" y="126" text-anchor="middle" fill="${C.text}" font-size="11" font-family="monospace">Printer</text><text x="150" y="175" text-anchor="middle" fill="${C.textDim}" font-size="10">Single location • High speed • Low latency</text></svg>`;
+  if(s.visual==="wan") return `<svg viewBox="0 0 300 180" class="wan-svg">${[[0,1],[1,2],[0,2]].map(([a,b])=>{const n=[{x:50,y:60},{x:250,y:60},{x:150,y:145}];return`<line x1="${n[a].x}" y1="${n[a].y}" x2="${n[b].x}" y2="${n[b].y}" stroke="${C.secondary}" stroke-width="2" stroke-dasharray="6,4" opacity=".4"><animate attributeName="stroke-dashoffset" values="20;0" dur="2s" repeatCount="indefinite"/></line>`}).join("")}${[{x:50,y:60,l:"Office A"},{x:250,y:60,l:"Office B"},{x:150,y:145,l:"HQ"}].map((n,i)=>`<circle cx="${n.x}" cy="${n.y}" r="24" fill="${C.bgAccent}" stroke="${C.secondary}" stroke-width="1.5"><animate attributeName="r" values="22;26;22" dur="3s" begin="${i*.5}s" repeatCount="indefinite"/></circle><text x="${n.x}" y="${n.y+4}" text-anchor="middle" fill="${C.text}" font-size="10" font-family="monospace">${n.l}</text>`).join("")}<text x="150" y="16" text-anchor="middle" fill="${C.textDim}" font-size="10">Multiple locations • ISP links • Higher latency</text></svg>`;
+  if(s.visual==="cmp"){const cols=s.cmpH.length;return`<div class="cmp"><div class="cmp-grid" style="grid-template-columns:repeat(${cols},1fr)">${s.cmpH.map(h=>`<div class="cmp-hdr">${h}</div>`).join("")}${s.cmpR.map((r,ri)=>r.map(c=>`<div class="cmp-cell ${ri%2===0?'even':'odd'}">${c}</div>`).join("")).join("")}</div></div>`}
+  if(s.visual==="ipv4") return `<div style="text-align:center"><div class="ip-display" style="color:${C.tertiary}">192.168.1.10</div><div class="ip-sub">32 bits • 4 octets • ~4.3 billion addresses</div><div class="binary-row">${["11000000","10101000","00000001","00001010"].map(b=>`<div class="binary-byte" style="color:${C.tertiary};border:1px solid ${C.tertiary}30">${b}</div>`).join("")}</div></div>`;
+  if(s.visual==="ipv6") return `<div style="text-align:center"><div class="ip-display" style="color:${C.tertiary};font-size:17px;word-break:break-all">2001:0db8:85a3::8a2e:0370:7334</div><div class="ip-sub">128 bits • 8 hex groups • 3.4 × 10³⁸ addresses</div><div class="ipv6-tags">${["SLAAC","No NAT","No Broadcast","Built-in IPsec"].map(t=>`<span class="ipv6-tag" style="background:${C.tertiary}18;border:1px solid ${C.tertiary}40;color:${C.tertiary}">${t}</span>`).join("")}</div></div>`;
+  if(s.visual==="subnet"){const bl=[{l:".0/26",r:".1–.62",c:C.primary},{l:".64/26",r:".65–.126",c:C.secondary},{l:".128/26",r:".129–.190",c:C.tertiary},{l:".192/26",r:".193–.254",c:C.success}];return`<div class="subnet-row">${bl.map((b,i)=>`<div class="subnet-block fade-up d${i+1}" style="background:${b.c}18;border:2px solid ${b.c}60"><div class="subnet-label" style="color:${b.c}">${b.l}</div><div class="subnet-range">${b.r}</div><div class="subnet-hosts">62 hosts</div></div>`).join("")}</div>`}
+  if(s.visual==="voip") return `<svg viewBox="0 0 340 140" class="voip-svg"><rect x="10" y="45" width="70" height="50" rx="8" fill="${C.bgAccent}" stroke="${C.danger}" stroke-width="1.5"/><text x="45" y="75" text-anchor="middle" fill="${C.text}" font-size="10" font-family="monospace">Phone A</text><rect x="135" y="30" width="70" height="80" rx="8" fill="${C.bgAccent}" stroke="${C.secondary}" stroke-width="1.5"/><text x="170" y="67" text-anchor="middle" fill="${C.secondary}" font-size="11" font-weight="bold">PBX</text><text x="170" y="81" text-anchor="middle" fill="${C.textDim}" font-size="9">SIP Server</text><rect x="260" y="45" width="70" height="50" rx="8" fill="${C.bgAccent}" stroke="${C.success}" stroke-width="1.5"/><text x="295" y="75" text-anchor="middle" fill="${C.text}" font-size="10" font-family="monospace">Phone B</text><line x1="80" y1="60" x2="135" y2="60" stroke="${C.danger}" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" values="14;0" dur="1s" repeatCount="indefinite"/></line><line x1="205" y1="60" x2="260" y2="60" stroke="${C.success}" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" values="14;0" dur="1s" repeatCount="indefinite"/></line><text x="108" y="53" text-anchor="middle" fill="${C.textDim}" font-size="9">SIP</text><text x="233" y="53" text-anchor="middle" fill="${C.textDim}" font-size="9">SIP</text><path d="M80,85 Q170,130 260,85" fill="none" stroke="${C.tertiary}" stroke-width="1.5" stroke-dasharray="6,3"><animate attributeName="stroke-dashoffset" values="18;0" dur="1.5s" repeatCount="indefinite"/></path><text x="170" y="130" text-anchor="middle" fill="${C.tertiary}" font-size="10" font-weight="bold">RTP Audio Stream</text></svg>`;
+  if(s.visual==="sip"){const st=["REGISTER","401 Challenge","Re-Auth","200 OK"];return`<div class="sip-steps">${st.map((t,i)=>`<div class="sip-step fade-up d${i+1}" style="background:${C.danger}20;border:1px solid ${C.danger}50">${t}</div>${i<st.length-1?'<span class="sip-arrow">→</span>':''}`).join("")}</div>`}
+  if(s.visual==="wrench") return `<div class="tip-icon">🔧</div>`;
+  if(s.visual==="summary") return `<div class="tip-icon" style="font-size:44px">🎓</div>`;
+  return"";
+}
+
+function renderSlide(){
+  const s=slides[cur],sc=secColor(s.section),area=$("slideArea");
+  let html=`<div class="slide ${s.id==="title"?"title-slide":""} fade-up">`;
+  if(s.id!=="title") html+=`<div class="section-tag" style="color:${sc}">${s.section}</div>`;
+  html+=`<h1>${s.title}</h1>`;
+  if(s.subtitle) html+=`<p class="subtitle">${s.subtitle}</p>`;
+  html+=`<div class="visual">${renderVisual(s)}</div>`;
+  if(s.bullets) html+=`<div class="bullets">${s.bullets.map((b,i)=>`<div class="bullet-item fade-up d${i+1}"><span class="bullet-mark" style="color:${sc}">›</span><span class="bullet-text">${b}</span></div>`).join("")}</div>`;
+  html+=`</div>`;
+  area.innerHTML=html;
+}
+
+function updateUI(){
+  const s=slides[cur],sc=secColor(s.section);
+  $("counter").textContent=`${cur+1} / ${slides.length}`;
+  $("topFill").style.width=`${((cur+progress)/slides.length)*100}%`;
+  $("topFill").style.background=`linear-gradient(90deg,${sc},${C.primary})`;
+  $("prevBtn").disabled=cur===0;
+  $("nextBtn").disabled=cur===slides.length-1;
+  $("playBtn").textContent=playing?"⏸":"▶";
+  $("playBtn").style.background=`linear-gradient(135deg,${sc},${sc}cc)`;
+  $("playBtn").style.boxShadow=`0 0 20px ${sc}40`;
+  buildDots();
+}
+
+function goTo(i){cur=Math.max(0,Math.min(i,slides.length-1));progress=0;start=Date.now();renderSlide();updateUI()}
+function next(){if(cur<slides.length-1)goTo(cur+1);else{playing=false;progress=1;updateUI()}}
+function prev(){if(cur>0)goTo(cur-1)}
+
+function togglePlay(){
+  playing=!playing;
+  if(playing){start=Date.now()-progress*DURATION;tick()}
+  else clearInterval(timer);
+  updateUI();
+}
+
+function tick(){
+  clearInterval(timer);
+  timer=setInterval(()=>{
+    const e=Date.now()-start;progress=Math.min(e/DURATION,1);
+    $("topFill").style.width=`${((cur+progress)/slides.length)*100}%`;
+    if(progress>=1)next();
+  },50);
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight")next();
+  else if(e.key==="ArrowLeft")prev();
+  else if(e.key===" "){e.preventDefault();togglePlay()}
+});
+
+// Touch swipe
+let tx=0;
+$("slideArea").addEventListener("touchstart",e=>{tx=e.changedTouches[0].screenX},{passive:true});
+$("slideArea").addEventListener("touchend",e=>{const dx=e.changedTouches[0].screenX-tx;if(dx<-50)next();else if(dx>50)prev()},{passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
